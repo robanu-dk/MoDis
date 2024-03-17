@@ -45,7 +45,7 @@ class UserController extends Controller
     public function regist(Request $request)
     {
         try {
-            if ($request->name == null || $request->username == null || $request->email == null || $request->role == null || $request->jenis_kelamin == null || $request->password == null) {
+            if ($request->name == null || $request->username == null || $request->email == null || $request->role === null || $request->jenis_kelamin === null || $request->password == null) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'data tidak boleh kosong',
@@ -75,7 +75,6 @@ class UserController extends Controller
                 'role' => $request->role,
                 'jenis_kelamin' => $request->jenis_kelamin,
                 'password' => bcrypt($request->password),
-                'token' => bin2hex(random_bytes(5)),
             ];
 
             User::create($data);
