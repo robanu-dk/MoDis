@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class UserController extends Controller
@@ -123,7 +124,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Email tidak terdaftar',
+                'message' => 'email tidak terdaftar',
             ]);
         }
 
@@ -160,10 +161,12 @@ class UserController extends Controller
         try {
             $mail->send();
 
+            $user->update(['reset_password_token' => implode("", $otp)]);
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'berhasil mengirim email',
-                'otp' => $otp,
+                'otp' => implode("", $otp),
             ]);
         } catch (\Throwable $th) {
             return response()->json([
@@ -177,19 +180,27 @@ class UserController extends Controller
 
     public function generateNewRandomPassword(Request $request)
     {
+        if (!$request->token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'reset password gagal',
+            ], 200);
+        }
+
         try {
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->where('reset_password_token', $request->token)->first();
 
             if (!$user) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'email tidak ditemukan',
+                    'message' => 'reset password gagal',
                 ], 200);
             }
 
             $new_password = $user->username . '_' . bin2hex(random_bytes(2));
             $user->update([
                 'password' => bcrypt($new_password),
+                'reset_password_token' => null,
             ]);
 
             return response()->json([

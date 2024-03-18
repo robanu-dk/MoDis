@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('role');
             $table->boolean('jenis_kelamin');
             $table->string('password', 255);
+            $table->string('reset_password_token', 255)->nullable();
             $table->string('token', 12)->nullable();
             $table->timestamps();
         });
