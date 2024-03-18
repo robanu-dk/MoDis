@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class UserController extends Controller
 {
@@ -112,6 +113,97 @@ class UserController extends Controller
                 'message' => $th->getMessage(),
                 'line' => $th->getLine(),
                 'file' => $th->getFile()
+            ], 400);
+        }
+    }
+
+    public function forgetPassword(Request $request) {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email tidak terdaftar',
+            ]);
+        }
+
+        // generate random otp
+        $otp = [random_int(0, 9), random_int(0, 9), random_int(0, 9), random_int(0, 9)];
+
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = 'smtp';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'modisapplication@gmail.com';
+        $mail->Password = 'ckjumcivzhhuwovu';
+        $mail->SMTPOptions = array(
+			'tls' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			)
+		);
+
+        $mail->setFrom('modisapplication@gmail.com', 'MoDis (Monitor Disabilitas) Application System');
+        $mail->addAddress($user->email, $user->name);
+        $mail->isHTML(true);
+        $mail->Subject = 'Kode OTP';
+        $mail->Body = '
+        <p>Ini adalah kode OTP untuk melakukan reset password akun anda.</p>
+        <p>Waspada pencurian data: <b>Jangan pernah berikan kode ini pada SIAPAPUN</b></p>
+        <p>Kode Anda <b>' . implode(" ", $otp) . '</b></p>
+        ';
+
+        try {
+            $mail->send();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'berhasil mengirim email',
+                'otp' => $otp,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile(),
+            ], 400);
+        }
+    }
+
+    public function generateNewRandomPassword(Request $request)
+    {
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'email tidak ditemukan',
+                ], 200);
+            }
+
+            $new_password = $user->username . '_' . bin2hex(random_bytes(2));
+            $user->update([
+                'password' => bcrypt($new_password),
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'berhasil reset password',
+                'password' => $new_password,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile(),
             ], 400);
         }
     }

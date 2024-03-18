@@ -12,4 +12,6 @@ Route::prefix('user')->group(function() {
     Route::post('login', [UserController::class, 'login']);
     Route::post('registrasi', [UserController::class, 'regist']);
     Route::post('logout', [UserController::class, 'logout']);
+    Route::post('forget-password', [UserController::class, 'forgetPassword']);
+    Route::post('generate-password', [UserController::class, 'generateNewRandomPassword']);
 });
