@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('profile_image', 255)->nullable();
             $table->string('reset_password_token', 255)->nullable();
             $table->string('token', 12)->nullable();
+            $table->boolean('verified')->default(1);
             $table->timestamps();
         });
     }

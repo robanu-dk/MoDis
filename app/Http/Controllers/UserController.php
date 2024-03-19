@@ -15,6 +15,13 @@ class UserController extends Controller
             $user = User::where('email', $request->email)->orWhere('username', $request->email)->first();
 
             if ($user) {
+                if (!$user->verified) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'akun menunggu verifikasi',
+                    ]);
+                }
+
                 if (password_verify($request->password, $user->password)) {
                     // generate token
                     $token = bin2hex(random_bytes(5));
@@ -77,6 +84,7 @@ class UserController extends Controller
                 'role' => $request->role,
                 'jenis_kelamin' => $request->jenis_kelamin,
                 'password' => bcrypt($request->password),
+                'verified' => $request->role? 0 : 1,
             ];
 
             User::create($data);
