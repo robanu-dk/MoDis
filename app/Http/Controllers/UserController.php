@@ -30,6 +30,9 @@ class UserController extends Controller
                     $user->update(['token' => $token]);
                     $user->token = $token;
 
+                    // get user nurse
+                    $user->guide = $user->id_pendamping? User::find($user->id_pendamping)->name : null;
+
                     return response()->json([
                         'status' => 'success',
                         'data' => $user
