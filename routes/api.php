@@ -14,4 +14,6 @@ Route::prefix('user')->group(function() {
     Route::post('logout', [UserController::class, 'logout']);
     Route::post('forget-password', [UserController::class, 'forgetPassword']);
     Route::post('generate-password', [UserController::class, 'generateNewRandomPassword']);
+    Route::post('update', [UserController::class, 'update']);
+    Route::post('change-password', [UserController::class, 'changePassword']);
 });

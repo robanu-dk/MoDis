@@ -229,4 +229,112 @@ class UserController extends Controller
             ], 400);
         }
     }
+
+    public function update(Request $request)
+    {
+        try {
+            // get data user
+            $user = User::where('email', $request->old_email)->first();
+
+            // check bearer token
+            if ($request->bearerToken() != $user->token) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memperbarui informasi akun',
+                ], 200);
+            }
+
+            // check email and username because they must unique
+            $check_email = User::where('email', $request->new_email)->first();
+            $check_username = User::where('username', $request->username)->first();
+            if ($check_email) {
+                if ($check_email->email != $user->email) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'email telah terdaftar'
+                    ], 200);
+                }
+            } else if ($check_username) {
+                if ($check_username->username != $user->username) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'username telah digunakan',
+                    ], 200);
+                }
+            }
+
+            // upload profile image
+            $profile_image = $request->file('profile_image');
+
+            // check client extension
+            if ($profile_image->getClientOriginalExtension() != 'png' && $profile_image->getClientOriginalExtension() != 'jpg' && $profile_image->getClientOriginalExtension() != 'jpeg') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'file foto harus berformat gambar',
+                ]);
+            }
+
+            if ($profile_image) {
+                // remove old_profile
+                if ($user->profile_image) {
+                    unlink(public_path() . '/' . $user->profile_image);
+                }
+
+                $filename = '/profile_image_' . $request->username . '.' . $profile_image->getClientOriginalExtension();
+                $profile_image->move(public_path() . '/profile', $filename);
+            }
+
+            // update data
+            $user->update([
+                'email' => $request->new_email,
+                'username' => $request->username,
+                'name' => $request->name,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'profile_image' => $request->profile_image? 'profile' . $filename : null,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $user,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile(),
+            ], 400);
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            // check token
+            if ($request->bearerToken() == $user->token) {
+                $user->update([
+                    'password' => bcrypt($request->password),
+                ]);
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'berhasil mengganti password',
+                ], 200);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'gagal mengganti password',
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile(),
+            ], 400);
+        }
+    }
 }
