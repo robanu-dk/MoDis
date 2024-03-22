@@ -18,7 +18,7 @@ class UserController extends Controller
                 if (!$user->verified) {
                     return response()->json([
                         'status' => 'error',
-                        'message' => 'akun menunggu verifikasi',
+                        'message' => 'akun menunggu verifikasi, silakan kirim email ke modisapplication@gmail.com',
                     ]);
                 }
 
