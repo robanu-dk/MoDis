@@ -266,15 +266,15 @@ class UserController extends Controller
             // upload profile image
             $profile_image = $request->file('profile_image');
 
-            // check client extension
-            if ($profile_image->getClientOriginalExtension() != 'png' && $profile_image->getClientOriginalExtension() != 'jpg' && $profile_image->getClientOriginalExtension() != 'jpeg') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'file foto harus berformat gambar',
-                ]);
-            }
-
             if ($profile_image) {
+                // check client extension
+                if ($profile_image->getClientOriginalExtension() != 'png' && $profile_image->getClientOriginalExtension() != 'jpg' && $profile_image->getClientOriginalExtension() != 'jpeg') {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'file foto harus berformat gambar',
+                    ]);
+                }
+
                 // remove old_profile
                 if ($user->profile_image) {
                     unlink(public_path() . '/' . $user->profile_image);
