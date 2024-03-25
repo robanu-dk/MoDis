@@ -265,6 +265,7 @@ class UserController extends Controller
 
             // upload profile image
             $profile_image = $request->file('profile_image');
+            $path = 'profile';
 
             if ($profile_image) {
                 // check client extension
@@ -281,8 +282,24 @@ class UserController extends Controller
                 }
 
                 $filename = '/profile_image_' . $request->username . '.' . $profile_image->getClientOriginalExtension();
+                $path .= $filename;
+
                 $profile_image->move(public_path() . '/profile', $filename);
+            } else {
+                if ($request->reset_profile_image) {
+                    unlink(public_path() . '/' . $user->profile_image);
+                    $path = null;
+                } else {
+                    if ($request->profile_image) {
+                        $old_path = explode('.', $user->profile_image);
+                        $path = $user->username == $request->username? $user->profile_image : 'profile/profile_image_' . $request->username . '.' . $old_path[count($old_path) - 1];
+                        rename(public_path() . '/' . $user->profile_image, public_path() . '/' . $path);
+                    } else {
+                        $path = null;
+                    }
+                }
             }
+
 
             // update data
             $user->update([
@@ -290,7 +307,7 @@ class UserController extends Controller
                 'username' => $request->username,
                 'name' => $request->name,
                 'jenis_kelamin' => $request->jenis_kelamin,
-                'profile_image' => $request->profile_image? 'profile' . $filename : null,
+                'profile_image' => $path,
             ]);
 
             return response()->json([
