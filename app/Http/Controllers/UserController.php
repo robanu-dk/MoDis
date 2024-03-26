@@ -247,6 +247,7 @@ class UserController extends Controller
             // check email and username because they must unique
             $check_email = User::where('email', $request->new_email)->first();
             $check_username = User::where('username', $request->username)->first();
+
             if ($check_email) {
                 if ($check_email->email != $user->email) {
                     return response()->json([
@@ -254,7 +255,9 @@ class UserController extends Controller
                         'message' => 'email telah terdaftar'
                     ], 200);
                 }
-            } else if ($check_username) {
+            }
+
+            if ($check_username) {
                 if ($check_username->username != $user->username) {
                     return response()->json([
                         'status' => 'error',
@@ -290,12 +293,10 @@ class UserController extends Controller
                     unlink(public_path() . '/' . $user->profile_image);
                     $path = null;
                 } else {
-                    if ($request->profile_image) {
+                    if ($user->profile_image) {
                         $old_path = explode('.', $user->profile_image);
                         $path = $user->username == $request->username? $user->profile_image : 'profile/profile_image_' . $request->username . '.' . $old_path[count($old_path) - 1];
                         rename(public_path() . '/' . $user->profile_image, public_path() . '/' . $path);
-                    } else {
-                        $path = null;
                     }
                 }
             }
