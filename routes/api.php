@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuideController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -16,4 +17,11 @@ Route::prefix('user')->group(function() {
     Route::post('generate-password', [UserController::class, 'generateNewRandomPassword']);
     Route::post('update', [UserController::class, 'update']);
     Route::post('change-password', [UserController::class, 'changePassword']);
+});
+
+Route::prefix('guide')->group(function() {
+    Route::post('all-user', [GuideController::class, 'getAllUser']);
+    Route::post('all-user-based-guide', [GuideController::class, 'getUserBasedGuide']);
+    Route::post('choose-user', [GuideController::class, 'chooseUser']);
+    Route::post('create-user', [GuideController::class, 'createUser']);
 });
