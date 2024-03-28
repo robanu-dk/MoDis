@@ -20,11 +20,13 @@ return new class extends Migration
             $table->boolean('jenis_kelamin');
             $table->string('password', 255);
             $table->string('profile_image', 255)->nullable();
-            $table->integer('id_pendamping')->nullable();
+            $table->unsignedBigInteger('id_pendamping')->nullable();
             $table->string('reset_password_token', 255)->nullable();
             $table->string('token', 12)->nullable();
             $table->boolean('verified')->default(1);
             $table->timestamps();
+
+            $table->foreign('id_pendamping')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
