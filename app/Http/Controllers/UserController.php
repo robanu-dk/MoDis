@@ -237,7 +237,7 @@ class UserController extends Controller
             $user = User::where('email', $request->old_email)->first();
 
             // check bearer token
-            if ($request->bearerToken() != $user->token) {
+            if ($request->bearerToken() != $user->token || !$user->token) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memperbarui informasi akun',
@@ -331,7 +331,7 @@ class UserController extends Controller
             $user = User::where('email', $request->email)->first();
 
             // check token
-            if ($request->bearerToken() == $user->token) {
+            if ($request->bearerToken() == $user->token && $user->token) {
                 $user->update([
                     'password' => bcrypt($request->password),
                 ]);
