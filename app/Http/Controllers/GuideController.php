@@ -12,7 +12,7 @@ class GuideController extends Controller
         try {
             $user = User::where('email', $request->email)->first();
 
-            if ($request->bearerToken() != $user->token || !$user->verified) {
+            if ($request->bearerToken() != $user->token || !$user->verified || !$user->token) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memuat daftar pengguna',
@@ -39,7 +39,7 @@ class GuideController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if ($request->bearerToken() != $user->token || !$user->verified) {
+            if ($request->bearerToken() != $user->token || !$user->verified || $user->token) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memuat daftar pengguna',
@@ -65,7 +65,7 @@ class GuideController extends Controller
         try {
             $guide = User::where('email', $request->guide_email)->first();
 
-            if ($request->bearerToken() != $guide->token || !$guide->verified) {
+            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memilih pengguna',
@@ -96,7 +96,7 @@ class GuideController extends Controller
         try {
             $guide = User::where('email', $request->guide_email)->first();
 
-            if ($request->bearerToken() != $guide->token || !$guide->verified) {
+            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal menambah pengguna',
@@ -140,6 +140,38 @@ class GuideController extends Controller
             return response()->json([
                 'status' => 'success',
                 'data' => User::where('role', 0)->where('id_pendamping', $guide->id)->get(),
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile(),
+            ], 400);
+        }
+    }
+
+    public function removeUser(Request $request)
+    {
+        try {
+            $guide = User::where('email', $request->guide_email)->first();
+
+            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token){
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal menghapus user dari relasi'
+                ], 200);
+            }
+
+            $user = User::where('email', $request->user_email)->first();
+            $user->update([
+                'id_pendamping' => NULL,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => User::where('id_pendamping', $guide->id)->get(),
             ], 200);
 
         } catch (\Throwable $th) {
