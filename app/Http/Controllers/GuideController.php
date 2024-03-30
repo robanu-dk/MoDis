@@ -39,7 +39,7 @@ class GuideController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if ($request->bearerToken() != $user->token || !$user->verified || $user->token) {
+            if ($request->bearerToken() != $user->token || !$user->verified || !$user->token) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memuat daftar pengguna',
