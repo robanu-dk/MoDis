@@ -30,8 +30,8 @@ class UserController extends Controller
                     $user->update(['token' => $token]);
                     $user->token = $token;
 
-                    // get user nurse
-                    $user->guide = $user->id_pendamping? User::find($user->id_pendamping)->name : null;
+                    // get user guide
+                    $user->guide = $user->guide_id? User::find($user->guide_id)->name : null;
 
                     return response()->json([
                         'status' => 'success',
@@ -57,7 +57,7 @@ class UserController extends Controller
     public function regist(Request $request)
     {
         try {
-            if ($request->name == null || $request->username == null || $request->email == null || $request->role === null || $request->jenis_kelamin === null || $request->password == null) {
+            if ($request->name == null || $request->username == null || $request->email == null || $request->role === null || $request->gender === null || $request->password == null) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'data tidak boleh kosong',
@@ -85,7 +85,7 @@ class UserController extends Controller
                 'username' => $request->username,
                 'email' => $request->email,
                 'role' => $request->role,
-                'jenis_kelamin' => $request->jenis_kelamin,
+                'gender' => $request->gender,
                 'password' => bcrypt($request->password),
                 'verified' => $request->role? 0 : 1,
             ];
@@ -306,7 +306,7 @@ class UserController extends Controller
                 'email' => $request->new_email,
                 'username' => $request->username,
                 'name' => $request->name,
-                'jenis_kelamin' => $request->jenis_kelamin,
+                'gender' => $request->gender,
                 'profile_image' => $path,
             ]);
 
