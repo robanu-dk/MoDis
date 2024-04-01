@@ -337,13 +337,13 @@ class UserController extends Controller
 
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'berhasil mengganti password',
+                    'message' => 'berhasil mengubah kata sandi',
                 ], 200);
             }
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'gagal mengganti password',
+                'message' => 'gagal mengubah kata sandi',
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
