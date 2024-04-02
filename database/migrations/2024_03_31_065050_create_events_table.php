@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->String('name');
             $table->date('date');
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->time('start_time', 0);
+            $table->time('end_time', 0);
             $table->text('keterangan');
             $table->timestamps();
         });

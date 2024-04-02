@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\GuideController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +25,9 @@ Route::prefix('guide')->group(function() {
     Route::post('all-user-based-guide', [GuideController::class, 'getUserBasedGuide']);
     Route::post('choose-user', [GuideController::class, 'chooseUser']);
     Route::post('create-user', [GuideController::class, 'createUser']);
+    Route::post('remove-user', [GuideController::class, 'removeUser']);
+});
+
+Route::prefix('event')->group(function() {
+    Route::post('all-today-event-child-user-based-id', [EventController::class, 'getEventTodayByUserBasedGuide']);
 });

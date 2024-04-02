@@ -160,11 +160,19 @@ class GuideController extends Controller
             if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token){
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'gagal menghapus user dari relasi'
+                    'message' => 'gagal menghapus pengguna dari relasi'
                 ], 200);
             }
 
-            $user = User::where('email', $request->user_email)->first();
+            $user = User::where('email', $request->user_email)->where('guide_id', $guide->id)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal menghapus pengguna dari relasi'
+                ], 200);
+            }
+
             $user->update([
                 'guide_id' => NULL,
             ]);
