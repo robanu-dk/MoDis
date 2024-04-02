@@ -21,7 +21,7 @@ class GuideController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => User::where('role', 0)->where('id_pendamping', NULL)->get(),
+                'data' => User::where('role', 0)->where('guide_id', NULL)->get(),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -48,7 +48,7 @@ class GuideController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => User::where('role', 0)->where('id_pendamping', $user->id)->get(),
+                'data' => User::where('role', 0)->where('guide_id', $user->id)->get(),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -73,12 +73,12 @@ class GuideController extends Controller
             }
 
             User::where('email', $request->user_email)->first()->update([
-                'id_pendamping' => $guide->id,
+                'guide_id' => $guide->id,
             ]);
 
             return response()->json([
                 'status' => 'success',
-                'data' => User::where('role', 0)->where('id_pendamping', $guide->id)->get(),
+                'data' => User::where('role', 0)->where('guide_id', $guide->id)->get(),
             ], 200);
 
         } catch (\Throwable $th) {
@@ -103,7 +103,7 @@ class GuideController extends Controller
                 ], 200);
             }
 
-            if ($request->name == null || $request->username == null || $request->user_email == null || $request->jenis_kelamin === null || $request->password == null) {
+            if ($request->name == null || $request->username == null || $request->user_email == null || $request->gender === null || $request->password == null) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'data tidak boleh kosong',
@@ -131,15 +131,15 @@ class GuideController extends Controller
             $user->username = $request->username;
             $user->name = $request->name;
             $user->role = 0;
-            $user->jenis_kelamin = $request->jenis_kelamin;
+            $user->gender = $request->gender;
             $user->password = bcrypt($request->password);
             $user->verified = 1;
-            $user->id_pendamping = $guide->id;
+            $user->guide_id = $guide->id;
             $user->save();
 
             return response()->json([
                 'status' => 'success',
-                'data' => User::where('role', 0)->where('id_pendamping', $guide->id)->get(),
+                'data' => User::where('role', 0)->where('guide_id', $guide->id)->get(),
             ], 200);
 
         } catch (\Throwable $th) {
@@ -166,12 +166,12 @@ class GuideController extends Controller
 
             $user = User::where('email', $request->user_email)->first();
             $user->update([
-                'id_pendamping' => NULL,
+                'guide_id' => NULL,
             ]);
 
             return response()->json([
                 'status' => 'success',
-                'data' => User::where('id_pendamping', $guide->id)->get(),
+                'data' => User::where('guide_id', $guide->id)->get(),
             ], 200);
 
         } catch (\Throwable $th) {
