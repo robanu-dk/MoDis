@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Weight;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class WeightController extends Controller
 {
@@ -34,7 +34,7 @@ class WeightController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => Weight::where('id_user', $user->id)->get(),
+                'data' => DB::select('SELECT * FROM `weights` w WHERE w.`id_user` = ? ORDER BY w.`date` DESC', [$user->id]),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -66,7 +66,7 @@ class WeightController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => Weight::where('id_user', $user->id)->get(),
+                'data' => DB::select('SELECT * FROM `weights` w WHERE w.`id_user` = ? ORDER BY w.`date` DESC', [$user->id]),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
