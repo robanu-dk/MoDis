@@ -5,6 +5,7 @@ use App\Http\Controllers\GuideController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WeightController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -30,4 +31,9 @@ Route::prefix('guide')->group(function() {
 
 Route::prefix('event')->group(function() {
     Route::post('all-today-event-child-user-based-id', [EventController::class, 'getEventTodayByUserBasedGuide']);
+});
+
+Route::prefix('weight')->group(function() {
+    Route::post('weight-based-guide', [WeightController::class, 'getWeightByGuide']);
+    Route::post('weight-based-user', [WeightController::class, 'getUserWeight']);
 });
