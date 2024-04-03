@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('date');
             $table->time('start_time', 0);
             $table->time('end_time', 0);
-            $table->text('keterangan');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

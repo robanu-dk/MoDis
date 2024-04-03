@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_user');
             $table->double('weight');
-            $table->date('tanggal');
+            $table->date('date');
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');
