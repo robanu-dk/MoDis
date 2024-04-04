@@ -109,11 +109,23 @@ class UserController extends Controller
     public function logout(Request $request)
     {
         try {
-            $user = User::where('email', $request->email)->orWhere('username', $request->email)->first();
+            $user = User::where('email', $request->email)->first();
 
-            if ($user) {
-                $user->update(['token' => NULL]);
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal keluar',
+                ], 200);
             }
+
+            if ($request->bearerToken() != $user->token || !$user->token) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal keluar',
+                ], 200);
+            }
+
+            $user->update(['token' => NULL]);
 
             return response()->json([
                 'status' => 'success',
