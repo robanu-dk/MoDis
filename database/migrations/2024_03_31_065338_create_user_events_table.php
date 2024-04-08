@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_event');
-            $table->boolean('done')->default(0);
+            $table->integer('status')->default(1);
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');

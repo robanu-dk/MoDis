@@ -39,7 +39,7 @@ class EventController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => DB::select('SELECT * FROM user_events ue INNER JOIN events e ON ue.`id_event` = e.`id` WHERE ue.`id_user` = ? AND e.`date` = ? ORDER BY e.`start_time`', [$user->id, date('Y-m-d')]),
+                'data' => DB::select('SELECT * FROM user_events ue INNER JOIN events e ON ue.`id_event` = e.`id` WHERE ue.`id_user` = ? AND e.`date` = ? AND ue.`status` != 0 ORDER BY e.`start_time`', [$user->id, date('Y-m-d')]),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([

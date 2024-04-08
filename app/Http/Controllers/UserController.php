@@ -118,13 +118,6 @@ class UserController extends Controller
                 ], 200);
             }
 
-            if ($request->bearerToken() != $user->token || !$user->token) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'gagal keluar',
-                ], 200);
-            }
-
             $user->update(['token' => NULL]);
 
             return response()->json([
