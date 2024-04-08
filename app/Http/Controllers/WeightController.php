@@ -275,7 +275,7 @@ class WeightController extends Controller
                 }
             }
 
-            DB::delete('DELETE `weight` w WHERE w.`id` = ? AND w.`user_id` = ?', [$request->weight_id, $user->id]);
+            DB::delete('DELETE FROM weights WHERE id = ? AND id_user = ?', [$request->weight_id, $user->id]);
 
             return response()->json([
                 'status' => 'success',
