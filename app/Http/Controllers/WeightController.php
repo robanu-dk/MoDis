@@ -122,6 +122,15 @@ class WeightController extends Controller
                 }
             }
 
+            // check weight
+            $weight_exist = Weight::where('id_user', $user->id)->where('date', $request->date)->first();
+            if ($weight_exist) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal menyimpan data karena tanggal ' . implode('-', array_reverse(explode('-', $request->date))) . ' terdapat data berat badan',
+                ], 200);
+            }
+
             Weight::create([
                 'weight' => $request->weight,
                 'id_user' => $user->id,
@@ -130,7 +139,7 @@ class WeightController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => DB::select('SELECT * FROM `weight` w WHERE w.`id_user` = ? ORDER BY w.`date` DESC', [$user->id]),
+                'data' => DB::select('SELECT * FROM `weights` w WHERE w.`id_user` = ? ORDER BY w.`date` DESC', [$user->id]),
             ], 200);
 
         } catch (\Throwable $th) {
