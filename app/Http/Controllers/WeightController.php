@@ -213,6 +213,15 @@ class WeightController extends Controller
                 ], 200);
             }
 
+            // check update
+            $data_exist = Weight::where('id', '!=', $weight->id)->where('date', date('Y-m-d', strtotime($request->date)))->where('id_user', $user->id)->first();
+            if ($data_exist) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memperbarui karena terdapat data berat badan pada tanggal ' . implode('-', array_reverse(explode('-', $request->date))),
+                ], 200);
+            }
+
             $weight->update([
                 'weight' => $request->weight,
                 'date' => date('Y-m-d', strtotime($request->date)),
@@ -220,7 +229,7 @@ class WeightController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => $weight,
+                'data' => DB::select('SELECT * FROM `weights` w WHERE w.`id_user` = ? ORDER BY w.`date` DESC', [$user->id]),
             ], 200);
 
         } catch (\Throwable $th) {
