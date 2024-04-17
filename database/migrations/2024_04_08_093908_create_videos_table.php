@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_user');
+            $table->unsignedBigInteger('id_video_category');
             $table->String('title');
             $table->String('thumbnail');
             $table->String('video');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');
+            $table->foreign('id_video_category')->references('id')->on('video_categories')->onUpdate('restrict')->onDelete('restrict');
         });
     }
 
