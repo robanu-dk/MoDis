@@ -36,7 +36,7 @@ class VideoController extends Controller
                     ], 200);
                 }
 
-                $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC LIMIT ? OFFSET ?', [$request->id_user, $request->limit, $request->offset]) : DB::select('SELECT * FROM `video` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC', [$request->id_user]);
+                $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->limit, $request->offset]) : DB::select('SELECT * FROM `video` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC', [$check_user->id]);
 
                 return response()->json([
                     'status' => 'success',
