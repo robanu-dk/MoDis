@@ -5,6 +5,7 @@ use App\Http\Controllers\GuideController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VideoCategoryController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WeightController;
 
@@ -47,4 +48,8 @@ Route::prefix('video')->group(function () {
     Route::put('update-video', [VideoController::class, 'updateVideo']);
     Route::post('upload-video', [VideoController::class, 'createVideo']);
     Route::delete('delete-video', [VideoController::class, 'deleteVideo']);
+});
+
+Route::prefix('video-categories')->group(function () {
+    Route::post('get-categories', [VideoCategoryController::class, 'getAllCategories']);
 });
