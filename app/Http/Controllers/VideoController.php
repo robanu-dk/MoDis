@@ -13,7 +13,7 @@ class VideoController extends Controller
     {
         try {
             if ($request->all_video) {
-                $data = $request->limit? DB::select('SELECT * FROM `videos` v ORDER BY v.`published_at` DESC LIMIT ? OFFSET ?', [$request->limit, $request->offset]) : DB::select('SELECT * FROM `videos` v ORDER BY v.`published_at` DESC');
+                $data = $request->limit? DB::select('SELECT * FROM `videos` v ORDER BY v.`published_at` DESC LIMIT ? OFFSET ?', [$request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v ORDER BY v.`published_at` DESC');
 
                 return response()->json([
                     'status' => 'success',
@@ -36,7 +36,7 @@ class VideoController extends Controller
                     ], 200);
                 }
 
-                $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->limit, $request->offset]) : DB::select('SELECT * FROM `video` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC', [$check_user->id]);
+                $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->limit, $request->start]) : DB::select('SELECT * FROM `video` v WHERE v.`id_user` = ? ORDER BY v.`published_at` DESC', [$check_user->id]);
 
                 return response()->json([
                     'status' => 'success',
