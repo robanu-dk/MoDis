@@ -51,5 +51,5 @@ Route::prefix('video')->group(function () {
 });
 
 Route::prefix('video-categories')->group(function () {
-    Route::post('get-categories', [VideoCategoryController::class, 'getAllCategories']);
+    Route::get('get', [VideoCategoryController::class, 'getAllCategories']);
 });

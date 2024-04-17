@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class VideoCategoryController extends Controller
 {
-    public function getAllCategories(Request $request)
+    public function getAllCategories()
     {
         try {
             return response()->json([
