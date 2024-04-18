@@ -16,7 +16,7 @@ class VideoController extends Controller
                 if ($request->category_id == '') {
                     $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v ORDER BY v.`id` DESC');
                 } else {
-                    $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_video_category` = ? v.`title` AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->category_id, $request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v WHERE v.`id_video_category` = ? ORDER BY v.`id` DESC', [$request->category_id]);
+                    $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_video_category` = ? AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->category_id, $request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v WHERE v.`id_video_category` = ? ORDER BY v.`id` DESC', [$request->category_id]);
                 }
 
                 return response()->json([
