@@ -13,7 +13,11 @@ class VideoController extends Controller
     {
         try {
             if ($request->all_video) {
-                $data = $request->limit? DB::select('SELECT * FROM `videos` v ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v ORDER BY v.`id` DESC');
+                if ($request->category_id == '') {
+                    $data = $request->limit? DB::select('SELECT * FROM `videos` v ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v ORDER BY v.`id` DESC');
+                } else {
+                    $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_video_category` = ? ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->category_id, $request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v WHERE v.`id_video_category` = ? ORDER BY v.`id` DESC', [$request->category_id]);
+                }
 
                 return response()->json([
                     'status' => 'success',
@@ -36,7 +40,11 @@ class VideoController extends Controller
                     ], 200);
                 }
 
-                $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_user` = ? ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->limit, $request->start]) : DB::select('SELECT * FROM `video` v WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$check_user->id]);
+                if ($request->category_id == '') {
+                    $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_user` = ? ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->limit, $request->start]) : DB::select('SELECT * FROM `video` v WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$check_user->id]);
+                } else {
+                    $data = $request->limit? DB::select('SELECT * FROM `videos` v WHERE v.`id_user` = ? AND v.`id_video_category` = ? ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->category_id, $request->limit, $request->start]) : DB::select('SELECT * FROM `video` v WHERE v.`id_user` = ? AND v.`id_video_category` = ? ORDER BY v.`id` DESC', [$check_user->id, $request->category_id]);
+                }
 
                 return response()->json([
                     'status' => 'success',
