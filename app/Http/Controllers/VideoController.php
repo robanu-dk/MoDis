@@ -14,9 +14,9 @@ class VideoController extends Controller
         try {
             if ($request->all_video) {
                 if ($request->category_id == '') {
-                    $data = $request->limit? DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` ORDER BY v.`id` DESC');
+                    $data = $request->limit? DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->limit, $request->start]) : DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` ORDER BY v.`id` DESC');
                 } else {
-                    $data = $request->limit? DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_video_category` = ? AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->category_id, $request->limit, $request->start]) : DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_video_category` = ? ORDER BY v.`id` DESC', [$request->category_id]);
+                    $data = $request->limit? DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_video_category` = ? AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$request->category_id, $request->limit, $request->start]) : DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_video_category` = ? ORDER BY v.`id` DESC', [$request->category_id]);
                 }
 
                 return response()->json([
@@ -41,9 +41,9 @@ class VideoController extends Controller
                 }
 
                 if ($request->category_id == '') {
-                    $data = $request->limit? DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->limit, $request->start]) : DB::select('SELECT * FROM `video` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$check_user->id]);
+                    $data = $request->limit? DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->limit, $request->start]) : DB::select('SELECT v.*, u.`name` FROM `video` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$check_user->id]);
                 } else {
-                    $data = $request->limit? DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? AND v.`id_video_category` = ? AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->category_id, $request->limit, $request->start]) : DB::select('SELECT * FROM `video` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? AND v.`id_video_category` = ? ORDER BY v.`id` DESC', [$check_user->id, $request->category_id]);
+                    $data = $request->limit? DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? AND v.`id_video_category` = ? AND v.`title` LIKE \'%' . $request->search . '%\' ORDER BY v.`id` DESC LIMIT ? OFFSET ?', [$check_user->id, $request->category_id, $request->limit, $request->start]) : DB::select('SELECT v.*, u.`name` FROM `video` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? AND v.`id_video_category` = ? ORDER BY v.`id` DESC', [$check_user->id, $request->category_id]);
                 }
 
                 return response()->json([
@@ -133,7 +133,7 @@ class VideoController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC'),
+                'data' => $video,
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -209,7 +209,7 @@ class VideoController extends Controller
 
             return response()->json([
                 'status' => 'error',
-                'data' => DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$user->id]),
+                'data' => DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$user->id]),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -240,11 +240,20 @@ class VideoController extends Controller
                 ], 200);
             }
 
-            Video::find($request->video_id)->delete();
+            $video_check = Video::where('id', $request->video_id)->first();
+            if (!$video_check) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'video tidak ditemukan',
+                    'video_id' => $request->video_id
+                ], 200);
+            }
+
+            $video_check->delete();
 
             return response()->json([
                 'status' => 'success',
-                'data' => DB::select('SELECT * FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$user->id]),
+                'message' => 'video berhasil dihapus'
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
