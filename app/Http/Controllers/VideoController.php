@@ -103,21 +103,21 @@ class VideoController extends Controller
 
                 unlink(public_path() . '/' . $video->thumbnail);
 
-                $thumbnail_name = 'thumbnail_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $thumbnail->getClientOriginalExtension();
+                $thumbnail_name = 'thumbnail/thumbnail_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $thumbnail->getClientOriginalExtension();
 
                 $thumbnail->move(public_path() . '/thumbnail', $thumbnail_name);
             }
 
             if ($request->file('video')) {
                 $video_update = $request->file('video');
-                if (array_search($video_update->getClientOriginalExtension(), ['mp4', 'webm']) === false) {
+                if (array_search($video_update->getClientOriginalExtension(), array('mp4', 'mov', 'webm', 'mkv', 'avi')) === false) {
                     return response()->json([
                         'status' => 'error',
-                        'message' => 'file video harus berformat MP4 atau WebM',
+                        'message' => 'file video harus berformat MP4, WebM, MOV, MKV, atau AVI',
                     ], 200);
                 }
 
-                $video_name = 'video_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $video_update->getClientOriginalExtension();
+                $video_name = 'video/video_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $video_update->getClientOriginalExtension();
 
                 unlink(public_path() . '/' . $video->video);
 
@@ -127,13 +127,14 @@ class VideoController extends Controller
             $video->update([
                 'title' => $request->title,
                 'description' => $request->description,
+                'id_video_category' => $request->category,
                 'thumbnail' => $thumbnail_name != ''? $thumbnail_name : $video->thumbnail,
                 'video' => $video_name != ''? $video_name : $video->video,
             ]);
 
             return response()->json([
                 'status' => 'success',
-                'data' => $video,
+                'data' => DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$user->id]),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -184,31 +185,32 @@ class VideoController extends Controller
                 ], 200);
             }
 
-            if (array_search($video->getClientOriginalExtension(), array('mp4', 'webm')) === false) {
+            if (array_search($video->getClientOriginalExtension(), array('mp4', 'mov', 'webm', 'mkv', 'avi')) === false) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'file video harus berformat MP4 atau WebM',
+                    'message' => 'file video harus berformat MP4, WebM, MOV, MKV, atau AVI',
                 ], 200);
             }
 
-            // upload thumbnail
-            $thumbnail_name = 'thumbnail_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $thumbnail->getClientOriginalExtension();
+            // upload thumbnail and video
             $video_name = 'video_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $video->getClientOriginalExtension();
+            $thumbnail_name = 'thumbnail_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $thumbnail->getClientOriginalExtension();
 
-            $thumbnail->move(public_path() . '/thumbnail', $thumbnail_name);
             $video->move(public_path() . '/video', $video_name);
+            $thumbnail->move(public_path() . '/thumbnail', $thumbnail_name);
 
             // save to db
             Video::create([
                 'id_user' => $user->id,
                 'title' => $request->title,
+                'id_video_category' => $request->category,
                 'thumbnail' => 'thumbnail/' . $thumbnail_name,
                 'video' => 'video/' . $video_name,
                 'description' => $request->description,
             ]);
 
             return response()->json([
-                'status' => 'error',
+                'status' => 'success',
                 'data' => DB::select('SELECT v.*, u.`name` FROM `videos` v LEFT JOIN `users` u ON v.`id_user` = u.`id` WHERE v.`id_user` = ? ORDER BY v.`id` DESC', [$user->id]),
             ], 200);
         } catch (\Throwable $th) {
@@ -248,6 +250,10 @@ class VideoController extends Controller
                     'video_id' => $request->video_id
                 ], 200);
             }
+
+            // delete thumbnail and video
+            unlink(public_path() . '/' . $video_check->video);
+            unlink(public_path() . '/' . $video_check->thumbnail);
 
             $video_check->delete();
 
