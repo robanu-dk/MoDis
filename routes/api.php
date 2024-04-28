@@ -45,7 +45,7 @@ Route::prefix('weight')->group(function() {
 
 Route::prefix('video')->group(function () {
     Route::post('get-video', [VideoController::class, 'getVideo']);
-    Route::put('update-video', [VideoController::class, 'updateVideo']);
+    Route::post('update-video', [VideoController::class, 'updateVideo']);
     Route::post('upload-video', [VideoController::class, 'createVideo']);
     Route::delete('delete-video', [VideoController::class, 'deleteVideo']);
 });
