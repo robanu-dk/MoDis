@@ -213,7 +213,7 @@ class UserController extends Controller
                 ], 200);
             }
 
-            $new_password = $user->username . '_' . bin2hex(random_bytes(2));
+            $new_password = 'pass_' . bin2hex(random_bytes(2));
             $user->update([
                 'password' => bcrypt($new_password),
                 'reset_password_token' => null,
