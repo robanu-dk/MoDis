@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GuideController;
 use Illuminate\Http\Request;
@@ -52,4 +53,9 @@ Route::prefix('video')->group(function () {
 
 Route::prefix('video-categories')->group(function () {
     Route::get('get', [VideoCategoryController::class, 'getAllCategories']);
+});
+
+Route::prefix('chats')->group(function () {
+    Route::post('get-all-chat', [ChatController::class, 'getMessage']);
+    Route::post('send-message', [ChatController::class, 'sendMessage']);
 });
