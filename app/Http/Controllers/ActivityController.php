@@ -39,7 +39,7 @@ class ActivityController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => DB::select('SELECT * FROM user_activity ua INNER JOIN activities a ON ua.`id_activity` = a.`id` WHERE ua.`id_user` = ? AND a.`date` = ? ORDER BY a.`start_time` ASC', [$user->id, date('Y-m-d')]),
+                'data' => DB::select('SELECT * FROM user_activities ua INNER JOIN activities a ON ua.`id_activity` = a.`id` WHERE ua.`id_user` = ? AND a.`date` = ? ORDER BY a.`start_time` ASC', [$user->id, date('Y-m-d')]),
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
