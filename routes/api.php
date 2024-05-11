@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GuideController;
@@ -32,8 +33,15 @@ Route::prefix('guide')->group(function() {
     Route::delete('remove-user', [GuideController::class, 'removeUser']);
 });
 
-Route::prefix('event')->group(function() {
-    Route::post('all-today-event-child-user-based-id', [EventController::class, 'getEventTodayByUserBasedGuide']);
+Route::prefix('activity')->group(function() {
+    Route::post('all-today-activity-child-user-based-id', [ActivityController::class, 'getActivityTodayByUserBasedGuide']);
+});
+
+Route::prefix('event')->group(function () {
+    Route::post('get-all-event', [EventController::class,'getAllEvent']);
+    Route::post('create-event', [EventController::class, 'createEvent']);
+    Route::post('update-event', [EventController::class, 'updateEvent']);
+    Route::delete('delete-event', [EventController::class, 'deleteEvent']);
 });
 
 Route::prefix('weight')->group(function() {

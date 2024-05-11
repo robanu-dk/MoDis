@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->String('name');
+            $table->String('name', 255);
+            $table->String('poster', 50)->nullable();
+            $table->enum('type', ['Offline', 'Online', 'Hybrid']);
             $table->date('date');
-            $table->time('start_time', 0);
-            $table->time('end_time', 0);
-            $table->text('note')->nullable();
-            $table->boolean('created_by_guide')->default(0);
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->text('location')->nullable();
+            $table->text('coordinate_location')->nullable();
+            $table->String('contact_person', 13);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
