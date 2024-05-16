@@ -155,7 +155,7 @@ class EventController extends Controller
 
             }
 
-            $event::update([
+            $event->update([
                 'name' => $request->event_name,
                 'poster' => $request->update_poster? ($request->file('event_poster')? 'poster/' . $filename : NULL)  : $event->poster,
                 'type' => $request->event_type,
