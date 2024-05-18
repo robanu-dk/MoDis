@@ -12,7 +12,14 @@ class GuideController extends Controller
         try {
             $user = User::where('email', $request->email)->first();
 
-            if ($request->bearerToken() != $user->token || !$user->verified || !$user->token) {
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memuat daftar pengguna',
+                ], 200);
+            }
+
+            if ($request->bearerToken() != $user->token || !$user->verified || !$user->token || !$user->role) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memuat daftar pengguna',
@@ -39,7 +46,14 @@ class GuideController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if ($request->bearerToken() != $user->token || !$user->verified || !$user->token) {
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memuat daftar pengguna',
+                ], 200);
+            }
+
+            if ($request->bearerToken() != $user->token || !$user->verified || !$user->token || !$user->role) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memuat daftar pengguna',
@@ -65,7 +79,14 @@ class GuideController extends Controller
         try {
             $guide = User::where('email', $request->guide_email)->first();
 
-            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token) {
+            if (!$guide) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memilih pengguna',
+                ], 200);
+            }
+
+            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token || !$guide->role) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memilih pengguna',
@@ -96,7 +117,14 @@ class GuideController extends Controller
         try {
             $guide = User::where('email', $request->guide_email)->first();
 
-            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token) {
+            if (!$guide) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal menambah pengguna',
+                ], 200);
+            }
+
+            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token || !$guide->role) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal menambah pengguna',
@@ -157,7 +185,14 @@ class GuideController extends Controller
         try {
             $guide = User::where('email', $request->guide_email)->first();
 
-            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token){
+            if (!$guide) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal menghapus pengguna dari relasi',
+                ], 200);
+            }
+
+            if ($request->bearerToken() != $guide->token || !$guide->verified || !$guide->token || !$guide->role){
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal menghapus pengguna dari relasi'

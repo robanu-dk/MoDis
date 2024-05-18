@@ -23,7 +23,7 @@ class WeightController extends Controller
                 return response()->json($error_response, 200);
             }
 
-            if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified) {
+            if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified || !$guide->role) {
                 return response()->json($error_response, 200);
             }
 
@@ -93,7 +93,7 @@ class WeightController extends Controller
                     ], 200);
                 }
 
-                if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified) {
+                if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified || !$guide->role) {
                     return response()->json([
                         'status' => 'error',
                         'message' => 'gagal menyimpan data berat badan',
@@ -167,7 +167,7 @@ class WeightController extends Controller
                     ], 200);
                 }
 
-                if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified) {
+                if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified || !$guide->role) {
                     return response()->json([
                         'status' => 'error',
                         'message' => 'gagal memperbarui data berat badan',
@@ -257,7 +257,7 @@ class WeightController extends Controller
                     ], 200);
                 }
 
-                if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified) {
+                if ($request->bearerToken() != $guide->token || !$guide->token || !$guide->verified || !$guide->role) {
                     return response()->json([
                         'status' => 'error',
                         'message' => 'gagal menghapus data berat badan',
