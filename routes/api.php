@@ -35,6 +35,13 @@ Route::prefix('guide')->group(function() {
 
 Route::prefix('activity')->group(function() {
     Route::post('all-today-activity-child-user-based-id', [ActivityController::class, 'getActivityTodayByUserBasedGuide']);
+    Route::post('get-all-my-activities', [ActivityController::class, 'getAllListActivity']);
+    Route::post('get-detail-activity', [ActivityController::class, 'getDetailActivity']);
+    Route::post('get-user-activity-coordinates', [ActivityController::class, 'getCoordinatesUserByGuide']);
+    Route::post('create-activity', [ActivityController::class, 'createActivity']);
+    Route::post('update-activity', [ActivityController::class, 'updateActivity']);
+    Route::delete('delete-activity', [ActivityController::class, 'deleteActivity']);
+    Route::post('finish-activity', [ActivityController::class, 'finishActivity']);
 });
 
 Route::prefix('event')->group(function () {
