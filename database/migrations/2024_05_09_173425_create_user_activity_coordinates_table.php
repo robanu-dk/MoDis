@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('user_activity_coordinates', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_user_activity');
             $table->text('coordinate');
             $table->timestamps();
 
-            $table->foreign('id_user')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');
             $table->foreign('id_user_activity')->references('id')->on('user_activities')->onUpdate('restrict')->onDelete('restrict');
         });
     }
