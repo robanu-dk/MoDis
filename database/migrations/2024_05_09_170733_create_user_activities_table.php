@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_activity');
-            $table->time('start_time')->nullable();
-            $table->time('finishing_time')->nullable();
+            $table->time('start_time');
+            $table->time('finishing_time');
             $table->boolean('done')->default(false);
             $table->timestamps();
 
