@@ -209,10 +209,12 @@ class ActivityController extends Controller
             ]);
 
             if ($request->child_account_id) {
-                UserActivity::create([
-                    'id_user' => $request->child_accoun_id,
-                    'id_activity' => $activity->id,
-                ]);
+                foreach ($request->child_account_id as $child_id) {
+                    UserActivity::create([
+                        'id_user' => $child_id,
+                        'id_activity' => $activity->id,
+                    ]);
+                }
             }
 
             return response()->json([
