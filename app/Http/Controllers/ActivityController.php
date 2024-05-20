@@ -208,7 +208,7 @@ class ActivityController extends Controller
                 'id_activity' => $activity->id,
             ]);
 
-            if ($request->child_account_id) {
+            if ($user->role && $request->child_account_id) {
                 foreach ($request->child_account_id as $child_id) {
                     UserActivity::create([
                         'id_user' => $child_id,
@@ -268,11 +268,11 @@ class ActivityController extends Controller
             }
 
             $activity->update([
-                'name' => $request->event_name,
-                'date' => $request->date,
-                'start_time' => $request->start_time,
-                'end_time' => $request->end_time,
-                'note' => $request->note,
+                'name' => $request->activity_name,
+                'date' => $request->activity_date,
+                'start_time' => $request->activity_start_time,
+                'end_time' => $request->activity_end_time,
+                'note' => $request->activity_note,
             ]);
 
             if ($user->role && $request->child_account_id) {
