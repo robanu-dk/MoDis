@@ -288,10 +288,12 @@ class ActivityController extends Controller
                 DB::delete('DELETE FROM `user_activities` WHERE `id_user` NOT IN (\'' . $list_child_id . '\')');
 
                 foreach($request->child_account_id as $child_id) {
-                    UserActivity::create([
-                        'id_user' => $child_id,
-                        'id_activity' => $activity->id,
-                    ]);
+                    if (!UserActivity::where('id_user', $child_id)->where('id_activity', $activity->id)->first()) {
+                        UserActivity::create([
+                            'id_user' => $child_id,
+                            'id_activity' => $activity->id,
+                        ]);
+                    }
                 }
             }
             return response()->json([
