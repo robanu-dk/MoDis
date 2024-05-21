@@ -285,7 +285,7 @@ class ActivityController extends Controller
 
             if ($user->role && $request->child_account_id) {
                 $list_child_id = implode('\',\'', $request->child_account_id);
-                DB::delete('DELETE FROM `user_activities` WHERE `id_user` NOT IN (\'' . $list_child_id . '\')');
+                DB::delete('DELETE FROM `user_activities` WHERE `id_activity` = ? AND `id_user` NOT IN (\'' . $list_child_id . '\')', [$activity->id]);
 
                 foreach($request->child_account_id as $child_id) {
                     if (!UserActivity::where('id_user', $child_id)->where('id_activity', $activity->id)->first()) {
