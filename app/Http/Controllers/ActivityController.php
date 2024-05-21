@@ -277,7 +277,7 @@ class ActivityController extends Controller
 
             if ($user->role && $request->child_account_id) {
                 $list_child_id = implode('\',\'', $request->child_account_id);
-                DB::delete('DELETE FROM `user_activities` ua WHERE ua.`id_user` NOT IN \'' . $list_child_id . '\'');
+                DB::delete('DELETE FROM `user_activities` WHERE `id_user` NOT IN \'' . $list_child_id . '\'');
 
                 foreach($request->child_account_id as $child_id) {
                     UserActivity::create([
@@ -347,9 +347,9 @@ class ActivityController extends Controller
             }
 
             if ($user->role) {
-                DB::delete('DELETE FROM `user_activities` ua WHERE ua.`id_activity` = ?', [$activity->id]);
+                DB::delete('DELETE FROM `user_activities` WHERE `id_activity` = ?', [$activity->id]);
             } else {
-                DB::delete('DELETE FROM `user_activities` ua WHERE ua.`id_user` = ? AND ua.`id_activity` = ?', [$user->id, $activity->id]);
+                DB::delete('DELETE FROM `user_activities` WHERE `id_user` = ? AND `id_activity` = ?', [$user->id, $activity->id]);
             }
 
             $activity->delete();
