@@ -355,7 +355,7 @@ class ActivityController extends Controller
             $activity->delete();
 
             return response()->json([
-                'status' => 'error',
+                'status' => 'success',
                 'message' => 'berhasil menghapus kegiatan',
             ], 200);
         } catch (\Throwable $th) {
