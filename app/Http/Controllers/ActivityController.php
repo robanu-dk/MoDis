@@ -118,9 +118,9 @@ class ActivityController extends Controller
 
             $data = [];
             if ($user->role) {
-                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, uac.`id` AS `activity_coordinate_id`, u.`id` AS `user_id`, u.`name` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `user_activity_coordinates` uac ON ua.`id` = uac.`id_user_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ?', [$activity->id]);
+                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, uac.`id` AS `activity_coordinate_id`, u.`id` AS `user_id`, u.`name` AS `user_name` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `user_activity_coordinates` uac ON ua.`id` = uac.`id_user_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ?', [$activity->id]);
             } else {
-                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, uac.`id` AS `activity_coordinate_id`, u.`id` AS `user_id`, u.`name` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `user_activity_coordinates` uac ON ua.`id` = uac.`id_user_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ? AND ua.`id_user` = ?', [$activity->id, $user->id]);
+                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, uac.`id` AS `activity_coordinate_id`, u.`id` AS `user_id`, u.`name` AS `user_name` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `user_activity_coordinates` uac ON ua.`id` = uac.`id_user_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ? AND ua.`id_user` = ?', [$activity->id, $user->id]);
             }
 
             return response()->json([
