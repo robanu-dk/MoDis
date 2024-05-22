@@ -61,7 +61,7 @@ class EventController extends Controller
                 ], 200);
             }
 
-            if ($request->bearerToken() != $user->token || !$user->token || !$user->verified) {
+            if ($request->bearerToken() != $user->token || !$user->token || !$user->verified || !$user->role) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal menambahkan event',
@@ -84,6 +84,7 @@ class EventController extends Controller
 
             Event::create([
                 'name' => $request->event_name,
+                'id_user' => $user->id,
                 'poster' => $poster? 'poster/' . $filename : NULL,
                 'type' => $request->event_type,
                 'date' => $request->event_date,
@@ -119,7 +120,7 @@ class EventController extends Controller
                 ], 200);
             }
 
-            if ($request->bearerToken() != $user->token || !$user->token || !$user->verified) {
+            if ($request->bearerToken() != $user->token || !$user->token || !$user->verified || !$user->role) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal memperbarui event',
@@ -192,7 +193,7 @@ class EventController extends Controller
                 ], 200);
             }
 
-            if ($request->bearerToken() != $user->token || !$user->token || !$user->verified) {
+            if ($request->bearerToken() != $user->token || !$user->token || !$user->verified || !$user->role) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'gagal menghapus event',
