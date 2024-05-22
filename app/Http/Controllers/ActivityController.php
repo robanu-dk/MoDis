@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Models\User;
 use App\Models\UserActivity;
-use App\Models\UserActivityCoordinate;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -118,9 +117,9 @@ class ActivityController extends Controller
 
             $data = [];
             if ($user->role) {
-                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, uac.`id` AS `activity_coordinate_id`, u.`id` AS `user_id`, u.`name` AS `user_name`, u.`email`, u.`profile_image` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `user_activity_coordinates` uac ON ua.`id` = uac.`id_user_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ?', [$activity->id]);
+                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, u.`id` AS `user_id`, u.`name` AS `user_name`, u.`email`, u.`profile_image` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ?', [$activity->id]);
             } else {
-                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, uac.`id` AS `activity_coordinate_id`, u.`id` AS `user_id`, u.`name` AS `user_name`, u.`email`, u.`profile_image` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `user_activity_coordinates` uac ON ua.`id` = uac.`id_user_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ? AND ua.`id_user` = ?', [$activity->id, $user->id]);
+                $data = DB::select('SELECT a.*, ua.`id` AS `user_activity_id`, ua.`done`, ua.`start_time` AS `start_activity_time`, ua.`finishing_time` AS `finishing_activity_time`, u.`id` AS `user_id`, u.`name` AS `user_name`, u.`email`, u.`profile_image` FROM `activities` a INNER JOIN `user_activities` ua ON a.`id` = ua.`id_activity` LEFT JOIN `users` u ON u.`id` = ua.`id_user` WHERE a.`id` = ? AND ua.`id_user` = ?', [$activity->id, $user->id]);
             }
 
             return response()->json([
@@ -167,7 +166,7 @@ class ActivityController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => UserActivityCoordinate::where('id_user_activity', $user_activity->id)->first(),
+                'data' => $user_activity,
             ], 200);
         } catch (\THrowable $th) {
             return response()->json([
@@ -205,7 +204,7 @@ class ActivityController extends Controller
             $activity->start_time = $request->activity_start_time;
             $activity->end_time = $request->activity_end_time;
             $activity->note = $request->activity_note;
-            $activity->created_by_guide = $request->child_account_id && $user->role;
+            $activity->created_by_guide = $request->list_child_account_id && $user->role;
             $activity->created_at = now();
             $activity->updated_at = now();
             $activity->save();
@@ -215,8 +214,8 @@ class ActivityController extends Controller
                 'id_activity' => $activity->id,
             ]);
 
-            if ($user->role && $request->child_account_id) {
-                foreach ($request->child_account_id as $child_id) {
+            if ($user->role && $request->list_child_account_id) {
+                foreach ($request->list_child_account_id as $child_id) {
                     UserActivity::create([
                         'id_user' => $child_id,
                         'id_activity' => $activity->id,
@@ -280,14 +279,14 @@ class ActivityController extends Controller
                 'start_time' => $request->activity_start_time,
                 'end_time' => $request->activity_end_time,
                 'note' => $request->activity_note,
-                'created_by_guide' => $request->child_account_id && $user->role,
+                'created_by_guide' => $request->list_child_account_id && $user->role,
             ]);
 
-            if ($user->role && $request->child_account_id) {
-                $list_child_id = implode('\',\'', $request->child_account_id);
+            if ($user->role && $request->list_child_account_id) {
+                $list_child_id = implode('\',\'', $request->list_child_account_id);
                 DB::delete('DELETE FROM `user_activities` WHERE `id_activity` = ? AND `id_user` NOT IN (\'' . $list_child_id . '\')', [$activity->id]);
 
-                foreach($request->child_account_id as $child_id) {
+                foreach($request->list_child_account_id as $child_id) {
                     if (!UserActivity::where('id_user', $child_id)->where('id_activity', $activity->id)->first()) {
                         UserActivity::create([
                             'id_user' => $child_id,
@@ -397,7 +396,15 @@ class ActivityController extends Controller
                 ], 200);
             }
 
-            $user_activities = UserActivity::where('id', $request->activity_id)->get();
+            $activity = Activity::where('id', $request->activity_id)->first();
+            if (!$activity) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal menyelesaikan kegiatan',
+                ], 200);
+            }
+
+            $user_activities = UserActivity::where('id_activity', $activity->id)->get();
 
             if (!count($user_activities)) {
                 return response()->json([
@@ -406,21 +413,16 @@ class ActivityController extends Controller
                 ], 200);
             }
 
-            foreach ($user_activities as $activity) {
-                if (!$activity->done) {
-                    $activity->update([
-                        'start_time' => $request->start_time,
-                        'finishing_time' => $request->finishing_time,
-                        'done' => 1,
-                    ]);
-
-                    if ($request->coordinates_tracking) {
-                        foreach($request->coordinates_tracking as $coordinate) {
-                            UserActivityCoordinate::create([
-                                'id_user_activity' => $activity->id,
-                                'coordinate' => $coordinate,
-                            ]);
-                        }
+            foreach ($request->list_child_account_id as $child_id) {
+                $child_activity = UserActivity::where('id_activity', $activity->id)->where('id_user', $child_id)->first();
+                if ($child_activity) {
+                    if ($child_activity->track_coordinates == NULL) {
+                        $child_activity->update([
+                            'start_time' => $request->start_time,
+                            'finishing_time' => $request->finishing_time,
+                            'track_coordinates' => $request->track_coordinates,
+                            'done' => 1,
+                        ]);
                     }
                 }
             }
