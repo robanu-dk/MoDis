@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_user');
             $table->String('name', 255);
             $table->String('poster', 50)->nullable();
             $table->enum('type', ['Offline', 'Online', 'Hybrid']);
@@ -24,6 +25,8 @@ return new class extends Migration
             $table->String('contact_person', 13);
             $table->boolean('status')->default(true);
             $table->timestamps();
+
+            $table->foreign('id_user')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');
         });
     }
 
