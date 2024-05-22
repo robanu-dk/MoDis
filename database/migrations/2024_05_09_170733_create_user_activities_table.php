@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_activity');
             $table->time('start_time')->nullable();
             $table->time('finishing_time')->nullable();
+            $table->longText('track_coordinates');
             $table->boolean('done')->default(false);
             $table->timestamps();
 
