@@ -29,11 +29,27 @@ class EventController extends Controller
 
             $search = $request->search ?? '';
 
-            if ($request->limit) {
-                $offset = $request->start ?? 0;
-                $data = DB::select('SELECT * FROM `events` e WHERE e.`name` LIKE \'%' . $search .'%\' AND e.`status` = 1 ORDER BY e.`date` DESC, e.`start_time` DESC LIMIT ? OFFSET ?', [$request->limit, $offset]);
+            if ($request->all_event) {
+                if ($request->limit) {
+                    $offset = $request->start ?? 0;
+                    $data = DB::select('SELECT e.*, u.`name` FROM `events` e INNER JOIN `users` u ON e.`id_user` = u.`id` WHERE e.`name` LIKE \'%' . $search .'%\' AND e.`status` = 1 ORDER BY e.`date` DESC, e.`start_time` DESC LIMIT ? OFFSET ?', [$request->limit, $offset]);
+                } else {
+                    $data = DB::select('SELECT e.*, u.`name` FROM `events` e INNER JOIN `users` u ON e.`id_user` = u.`id` WHERE e.`name` LIKE \'%' . $search .'%\' AND e.`status` = 1 ORDER BY e.`date` DESC, e.`start_time` DESC');
+                }
             } else {
-                $data = DB::select('SELECT * FROM `events` e WHERE e.`name` LIKE \'%' . $search .'%\' AND e.`status` = 1 ORDER BY e.`date` DESC, e.`start_time` DESC');
+                if (!$user->role) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'gagal memperoleh informasi event',
+                    ], 200);
+                }
+
+                if ($request->limit) {
+                    $offset = $request->start ?? 0;
+                    $data = DB::select('SELECT * FROM `events` e WHERE e.`id_user` = ? AND e.`name` LIKE \'%' . $search .'%\' AND e.`status` = 1 ORDER BY e.`date` DESC, e.`start_time` DESC LIMIT ? OFFSET ?', [$user->id, $request->limit, $offset]);
+                } else {
+                    $data = DB::select('SELECT * FROM `events` e WHERE e.`id_user` = ? AND e.`name` LIKE \'%' . $search .'%\' AND e.`status` = 1 ORDER BY e.`date` DESC, e.`start_time` DESC', [$user->id]);
+                }
             }
 
             return response()->json([
