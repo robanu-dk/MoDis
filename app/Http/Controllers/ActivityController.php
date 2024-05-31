@@ -67,7 +67,7 @@ class ActivityController extends Controller
             }
 
             if ($request->bearerToken() != $user->token || !$user->token) {
-                return response()->son([
+                return response()->json([
                     'status' => 'error',
                     'message' => 'gagal mendapatkan informasi',
                 ], 200);
