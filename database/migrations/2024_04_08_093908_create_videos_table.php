@@ -18,7 +18,7 @@ return new class extends Migration
             $table->String('title');
             $table->String('thumbnail');
             $table->String('video');
-            $table->String('description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');
