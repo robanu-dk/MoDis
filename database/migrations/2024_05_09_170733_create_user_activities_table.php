@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_activities', function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_activity');
             $table->time('start_time')->nullable();
