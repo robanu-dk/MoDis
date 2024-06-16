@@ -413,23 +413,13 @@ class ActivityController extends Controller
                 ], 200);
             }
 
-            $user_activities->update([
-                'start_time' => $request->start_time,
-                'finishing_time' => $request->finishing_time,
-                'track_coordinates' => $request->track_coordinates,
-                'done' => 1,
-            ]);
+            DB::update('UPDATE `user_activities` SET `start_time` = ?, `finishing_time` = ?, `track_coordinates` = ?, `done` = `1` WHERE `id_activity` = ? AND `id_user` = ?', [$request->start_time, $request->finishing_time, $request->track_coordinates, $activity->id, $user->id]);
 
             foreach ($request->list_child_account_id as $child_id) {
                 $child_activity = UserActivity::where('id_activity', $activity->id)->where('id_user', $child_id)->first();
                 if ($child_activity) {
                     if (!$child_activity->done) {
-                        $child_activity->update([
-                            'start_time' => $request->start_time,
-                            'finishing_time' => $request->finishing_time,
-                            'track_coordinates' => $request->track_coordinates,
-                            'done' => 1,
-                        ]);
+                        DB::update('UPDATE `user_activities` SET `start_time` = ?, `finishing_time` = ?, `track_coordinates` = ?, `done` = `1` WHERE `id_activity` = ? AND `id_user` = ?', [$request->start_time, $request->finishing_time, $request->track_coordinates, $activity->id, $child_id]);
                     }
                 }
             }
