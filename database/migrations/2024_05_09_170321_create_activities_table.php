@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_user');
             $table->String('name');
             $table->date('date');
             $table->time('start_time', 0);
@@ -20,6 +21,8 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->boolean('created_by_guide')->default(0);
             $table->timestamps();
+
+            $table->foreign('id_user')->references('id')->on('users')->onUpdate('restrict')->onDelete('restrict');
         });
     }
 

@@ -199,6 +199,7 @@ class ActivityController extends Controller
             }
 
             $activity = new Activity();
+            $activity->id_user = $user->id;
             $activity->name = $request->activity_name;
             $activity->date = $request->activity_date;
             $activity->start_time = $request->activity_start_time;
