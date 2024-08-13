@@ -280,7 +280,7 @@ class ActivityController extends Controller
                 'start_time' => $request->activity_start_time,
                 'end_time' => $request->activity_end_time,
                 'note' => $request->activity_note,
-                'created_by_guide' => $request->list_child_account_id && $user->role,
+                'created_by_guide' => count($request->list_child_account_id) > 1 && $user->role,
             ]);
 
             if ($user->role && $request->list_child_account_id) {
