@@ -122,6 +122,21 @@ class WeightController extends Controller
                 }
             }
 
+            // validate value input
+            if (preg_match('/[^0-9.]/', $request->weight)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'terdapat karakter selain angka dan tanda titik (.)',
+                ]);
+            }
+
+            if ($request->weight < 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'berat badan tidak boleh bernilai negatif',
+                ]);
+            }
+
             // check weight
             $weight_exist = Weight::where('id_user', $user->id)->where('date', $request->date)->first();
             if ($weight_exist) {
@@ -201,6 +216,21 @@ class WeightController extends Controller
                         'message' => 'gagal memperbarui data berat badan',
                     ], 200);
                 }
+            }
+
+            // validate value input
+            if (preg_match('/[^0-9.]/', $request->weight)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'terdapat karakter selain angka dan tanda titik (.)',
+                ]);
+            }
+
+            if ($request->weight < 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'berat badan tidak boleh bernilai negatif',
+                ]);
             }
 
             // update
