@@ -137,6 +137,13 @@ class WeightController extends Controller
                 ]);
             }
 
+            if (preg_match_all('/\./', $request->weight, $matches) > 1) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'hanya boleh terdapat satu karakter titik (.)!',
+                ]);
+            }
+
             // check weight
             $weight_exist = Weight::where('id_user', $user->id)->where('date', $request->date)->first();
             if ($weight_exist) {
@@ -230,6 +237,13 @@ class WeightController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'berat badan tidak boleh bernilai negatif',
+                ]);
+            }
+
+            if (preg_match_all('/\./', $request->weight, $matches) > 1) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'hanya boleh terdapat satu karakter titik (.)!',
                 ]);
             }
 
