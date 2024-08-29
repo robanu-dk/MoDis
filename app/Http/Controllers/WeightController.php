@@ -123,17 +123,17 @@ class WeightController extends Controller
             }
 
             // validate value input
-            if (preg_match('/[^0-9.]/', $request->weight)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'terdapat karakter selain angka dan tanda titik (.)',
-                ]);
-            }
-
             if ($request->weight < 0) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'berat badan tidak boleh bernilai negatif',
+                ]);
+            }
+
+            if (preg_match('/[^0-9.]/', $request->weight)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'terdapat karakter selain angka dan tanda titik (.)',
                 ]);
             }
 
@@ -226,17 +226,17 @@ class WeightController extends Controller
             }
 
             // validate value input
-            if (preg_match('/[^0-9.]/', $request->weight)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'terdapat karakter selain angka dan tanda titik (.)',
-                ]);
-            }
-
             if ($request->weight < 0) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'berat badan tidak boleh bernilai negatif',
+                ]);
+            }
+
+            if (preg_match('/[^0-9.]/', $request->weight)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'terdapat karakter selain angka dan tanda titik (.)',
                 ]);
             }
 
