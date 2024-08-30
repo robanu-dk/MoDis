@@ -446,10 +446,10 @@ class UserController extends Controller
                 ]);
             }
 
-            if ($request->height > 300 || $request->height < 0) {
+            if ($request->height > 300 || $request->height <= 0) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'berat badan tidak boleh bernilai 0 dan lebih dari 300 cm',
+                    'message' => 'tinggi badan tidak boleh bernilai 0 dan lebih dari 300 cm',
                 ]);
             }
 

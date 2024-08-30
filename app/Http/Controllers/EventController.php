@@ -95,7 +95,7 @@ class EventController extends Controller
                 }
 
                 $filename = 'event_poster_' . substr($poster->getClientOriginalName(), 0, 10) .'_' . time() . '.' . $poster->getClientOriginalExtension();
-                $poster->move(public_path() . '/poster', $filename);
+                $poster->move('/home/techcrea/modis.techcreator.my.id' . '/poster', $filename);
             }
 
             Event::create([
@@ -163,11 +163,11 @@ class EventController extends Controller
                     }
 
                     $filename = 'event_poster_' . substr($poster->getClientOriginalName(), 0, 10) .'_' . time() . '.' . $poster->getClientOriginalExtension();
-                    $poster->move(public_path() . '/poster', $filename);
+                    $poster->move('/home/techcrea/modis.techcreator.my.id' . '/poster', $filename);
                 }
 
                 if ($event->poster) {
-                    unlink(public_path() . '/' . $event->poster);
+                    unlink('/home/techcrea/modis.techcreator.my.id' . '/' . $event->poster);
                 }
 
             }
