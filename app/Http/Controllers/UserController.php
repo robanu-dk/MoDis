@@ -432,13 +432,6 @@ class UserController extends Controller
             }
 
             // validate value input
-            if ($request->height > 300 || $request->height < 0) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'berat badan tidak boleh bernilai 0 dan lebih dari 300',
-                ]);
-            }
-
             if (preg_match('/[^0-9.]/', $request->height)) {
                 return response()->json([
                     'status' => 'error',
@@ -450,6 +443,13 @@ class UserController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'hanya boleh terdapat satu karakter titik (.)!',
+                ]);
+            }
+
+            if ($request->height > 300 || $request->height < 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'berat badan tidak boleh bernilai 0 dan lebih dari 300 cm',
                 ]);
             }
 
