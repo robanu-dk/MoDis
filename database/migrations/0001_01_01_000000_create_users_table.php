@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email', 255)->unique();
             $table->boolean('role');
             $table->boolean('gender');
+            $table->integer('height')->nullable();
             $table->string('password', 255);
             $table->string('profile_image', 255)->nullable();
             $table->unsignedBigInteger('guide_id')->nullable();

@@ -295,7 +295,9 @@ class UserController extends Controller
                 $profile_image->move(public_path() . '/profile', $filename);
             } else {
                 if ($request->reset_profile_image) {
-                    unlink(public_path() . '/' . $user->profile_image);
+                    if ($user->profile_image) {
+                        unlink(public_path() . '/' . $user->profile_image);
+                    }
                 } else {
                     if ($user->profile_image) {
                         $old_path = explode('.', $user->profile_image);
@@ -350,6 +352,133 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => 'gagal mengubah kata sandi',
             ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile(),
+            ], 400);
+        }
+    }
+
+    public function getUserHeight(Request $request)
+    {
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memuat informasi tinggi badan',
+                ], 200);
+            }
+
+            if ($request->bearerToken() != $user->token) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memuat informasi tinggi badan',
+                ], 200);
+            }
+
+            if ($request->child_email) {
+                $child = User::where('email', $request->child_email)->first();
+
+                if (!$child) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'gagal memuat informasi tinggi badan'
+                    ], 200);
+                }
+
+                return response()->json([
+                    'email' => $child->email,
+                    'height' => $child->height,
+                ], 200);
+            } else {
+                return response()->json([
+                    'email' => $user->email,
+                    'height' => $user->height,
+                ], 200);
+            }
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile(),
+            ], 400);
+        }
+    }
+
+    public function updateUserHeight(Request $request)
+    {
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memperbarui informasi tinggi badan',
+                ], 200);
+            }
+
+            if ($request->bearerToken() != $user->token) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'gagal memperbarui informasi tinggi badan',
+                ], 200);
+            }
+
+            // validate value input
+            if ($request->height > 300 || $request->height < 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'berat badan tidak boleh bernilai 0 dan lebih dari 300',
+                ]);
+            }
+
+            if (preg_match('/[^0-9.]/', $request->height)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'terdapat karakter selain angka dan tanda titik (.)',
+                ]);
+            }
+
+            if (preg_match_all('/\./', $request->height, $matches) > 1) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'hanya boleh terdapat satu karakter titik (.)!',
+                ]);
+            }
+
+            // update
+            if ($request->child_email) {
+                $child = User::where('email', $request->child_email)->first();
+
+                if (!$child) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'gagal memperbarui informasi tinggi badan',
+                    ], 200);
+                }
+
+                $child->update(['height' => $request->height]);
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'berhasil memperbarui informasi tinggi badan',
+                ], 200);
+            } else {
+                $user->update(['height' => $request->height]);
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'berhasil memperbarui informasi tinggi badan',
+                ], 200);
+            }
+
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 'error',

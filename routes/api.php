@@ -74,3 +74,8 @@ Route::prefix('chats')->group(function () {
     Route::post('get-all-chat', [ChatController::class, 'getMessage']);
     Route::post('send-message', [ChatController::class, 'sendMessage']);
 });
+
+Route::prefix('height')->group(function () {
+    Route::post('get-user-height', [UserController::class, 'getUserHeight']);
+    Route::post('update-height', [UserController::class, 'updateUserHeight']);
+});
