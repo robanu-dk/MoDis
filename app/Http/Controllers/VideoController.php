@@ -101,11 +101,11 @@ class VideoController extends Controller
                     ], 200);
                 }
 
-                unlink('/home/techcrea/modis.techcreator.my.id' . '/' . $video->thumbnail);
+                unlink(public_path() . '/' . $video->thumbnail);
 
                 $thumbnail_name = 'thumbnail/thumbnail_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $thumbnail->getClientOriginalExtension();
 
-                $thumbnail->move('/home/techcrea/modis.techcreator.my.id' . '/thumbnail', $thumbnail_name);
+                $thumbnail->move(public_path() . '/thumbnail', $thumbnail_name);
             }
 
             if ($request->file('video')) {
@@ -119,9 +119,9 @@ class VideoController extends Controller
 
                 $video_name = 'video/video_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $video_update->getClientOriginalExtension();
 
-                unlink('/home/techcrea/modis.techcreator.my.id' . '/' . $video->video);
+                unlink(public_path() . '/' . $video->video);
 
-                $video_update->move('/home/techcrea/modis.techcreator.my.id' . '/video', $video_name);
+                $video_update->move(public_path() . '/video', $video_name);
             }
 
             $video->update([
@@ -196,8 +196,8 @@ class VideoController extends Controller
             $video_name = 'video_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $video->getClientOriginalExtension();
             $thumbnail_name = 'thumbnail_created_by_' . $user->username . '_at_' . date('Y_m_d') . '_' . time() . '_title_' . $request->title . '.' . $thumbnail->getClientOriginalExtension();
 
-            $video->move('/home/techcrea/modis.techcreator.my.id' . '/video', $video_name);
-            $thumbnail->move('/home/techcrea/modis.techcreator.my.id' . '/thumbnail', $thumbnail_name);
+            $video->move(public_path() . '/video', $video_name);
+            $thumbnail->move(public_path() . '/thumbnail', $thumbnail_name);
 
             // save to db
             Video::create([
@@ -252,8 +252,8 @@ class VideoController extends Controller
             }
 
             // delete thumbnail and video
-            unlink('/home/techcrea/modis.techcreator.my.id' . '/' . $video_check->video);
-            unlink('/home/techcrea/modis.techcreator.my.id' . '/' . $video_check->thumbnail);
+            unlink(public_path() . '/' . $video_check->video);
+            unlink(public_path() . '/' . $video_check->thumbnail);
 
             $video_check->delete();
 
