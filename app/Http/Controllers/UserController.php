@@ -397,6 +397,7 @@ class UserController extends Controller
                 ], 200);
             } else {
                 return response()->json([
+                    'status' => 'success',
                     'email' => $user->email,
                     'height' => $user->height,
                 ], 200);
