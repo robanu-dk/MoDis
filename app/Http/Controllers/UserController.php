@@ -286,7 +286,9 @@ class UserController extends Controller
 
                 // remove old_profile
                 if ($user->profile_image) {
-                    unlink(public_path() . '/' . $user->profile_image);
+                    if (file_exists(public_path() . '/' . $user->profile_image)) {
+                        unlink(public_path() . '/' . $user->profile_image);
+                    }
                 }
 
                 $filename = '/profile_image_' . $request->username . '.' . $profile_image->getClientOriginalExtension();
@@ -296,7 +298,9 @@ class UserController extends Controller
             } else {
                 if ($request->reset_profile_image) {
                     if ($user->profile_image) {
-                        unlink(public_path() . '/' . $user->profile_image);
+                        if (file_exists(public_path() . '/' . $user->profile_image)) {
+                            unlink(public_path() . '/' . $user->profile_image);
+                        }
                     }
                 } else {
                     if ($user->profile_image) {
